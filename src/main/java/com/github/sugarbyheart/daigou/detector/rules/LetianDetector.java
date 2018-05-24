@@ -2,6 +2,7 @@ package com.github.sugarbyheart.daigou.detector.rules;
 
 import com.github.sugarbyheart.daigou.common.DTO.ItemDiscription;
 import com.github.sugarbyheart.daigou.common.Enum.LinkTypeEnum;
+import com.github.sugarbyheart.daigou.common.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -10,23 +11,18 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class XinluoWebService implements WebService {
+public class LetianDetector implements WebDetector {
 
-    private final String prefix = "m.shilladfs.com";
-    private final String selector =
-            "#container > div.detail_view > div.pr_wrap.clear_both > div.txt > ul > li > a.btn_soldout";
+    private String selector = "a[href*=javascript:cartPopup]";
 
     @Override
     public LinkTypeEnum linkType() {
-        return LinkTypeEnum.Xinluo;
+        return LinkTypeEnum.Letian;
     }
 
     @Override
     public boolean validUrl(String url) {
-        if (!url.contains(prefix)) {
-            return false;
-        }
-        return true;
+        return Utils.getLinkTypeEnum(url) == LinkTypeEnum.Letian;
     }
 
     @Override
@@ -35,9 +31,9 @@ public class XinluoWebService implements WebService {
             Document doc = Jsoup.connect(itemDiscription.getLink()).get();
             Elements elements = doc.select(selector);
             if (elements != null && elements.size() != 0) {
-                return false;
+                return true;
             }
-            return true;
+            return false;
         } catch (Exception e) {
 
             log.error("Exception: {}", e);

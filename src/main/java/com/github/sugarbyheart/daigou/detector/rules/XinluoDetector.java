@@ -2,6 +2,7 @@ package com.github.sugarbyheart.daigou.detector.rules;
 
 import com.github.sugarbyheart.daigou.common.DTO.ItemDiscription;
 import com.github.sugarbyheart.daigou.common.Enum.LinkTypeEnum;
+import com.github.sugarbyheart.daigou.common.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -10,40 +11,34 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class LetianWebService implements WebService {
+public class XinluoDetector implements WebDetector {
 
-    private final String base = "chn.lottedfs.com";
-    private final String selector1 = "#prdDetailTopArea > div.productArea > div.info > div.buyBtn.soldOut";
-    private final String selector2 = "#prdDetailTopArea > div.rightSection " +
-            "> div.tab-container > div.tabsBody.tabs01 > div.btn > a";
+    private String selector = "a[onclick*=productDetailInfo.cart()]";
 
     @Override
     public LinkTypeEnum linkType() {
-        return LinkTypeEnum.Letian;
+        return LinkTypeEnum.Xinluo;
     }
 
     @Override
     public boolean validUrl(String url) {
-        if (!url.contains(base)) {
-            return false;
-        }
-        return true;
+        return Utils.getLinkTypeEnum(url) == LinkTypeEnum.Xinluo;
     }
 
     @Override
     public boolean canBuy(ItemDiscription itemDiscription) {
         try {
             Document doc = Jsoup.connect(itemDiscription.getLink()).get();
-            Elements elements1 = doc.select(selector1);
-            Elements elements2 = doc.select(selector2);
-            if ((elements1 != null && elements1.size() != 0)
-                    || elements2 != null && elements2.size() == 2) {
-                return false;
+            Elements elements = doc.select(selector);
+            if (elements != null && elements.size() != 0) {
+                return true;
             }
-            return true;
+            return false;
         } catch (Exception e) {
+
             log.error("Exception: {}", e);
             return false;
         }
     }
+
 }

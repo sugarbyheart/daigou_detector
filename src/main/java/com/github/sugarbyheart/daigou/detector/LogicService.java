@@ -2,8 +2,8 @@ package com.github.sugarbyheart.daigou.detector;
 
 import com.github.sugarbyheart.daigou.common.DTO.ItemDiscription;
 import com.github.sugarbyheart.daigou.common.Enum.LinkTypeEnum;
-import com.github.sugarbyheart.daigou.detector.rules.LetianWebService;
-import com.github.sugarbyheart.daigou.detector.rules.XinluoWebService;
+import com.github.sugarbyheart.daigou.detector.rules.LetianDetector;
+import com.github.sugarbyheart.daigou.detector.rules.XinluoDetector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -11,10 +11,10 @@ import org.springframework.stereotype.Component;
 public class LogicService {
 
     @Autowired
-    private LetianWebService letianWebService;
+    private LetianDetector letianWebService;
 
     @Autowired
-    private XinluoWebService xinluoWebService;
+    private XinluoDetector xinluoWebService;
 
     public boolean canBuy(ItemDiscription itemDiscription) {
         if (itemDiscription.getLinkTypeEnum().equals(LinkTypeEnum.Letian)) {
